@@ -102,6 +102,9 @@ iblt_B.insert("b", "val")
 iblt_B.insert("c", "val")
 iblt_B.insert("d", "val")
 
+iblt_A.known_keys.update(iblt_B.known_keys)
+iblt_A.known_values.update(iblt_B.known_values)
+
 iblt_A.subtract(iblt_B, max_symbols=20)
 
 # odczytanie roznic
