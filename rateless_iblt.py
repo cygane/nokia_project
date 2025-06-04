@@ -124,30 +124,30 @@ class RatelessIBLT:
         Returns:
             tuple: (lista dodanych kluczy, lista usuniętych kluczy)
         """
-        entries = []
-        deletions = []
-        changed = True
-        while changed:
-            changed = False
-            for i, cell in enumerate(self.symbols):
-                if abs(cell.count) == 1:
-                    key_int = cell.key_sum
-                    key_str = self.known_keys.get(key_int)
-                    if key_str is None:
-                        continue
-                    if cell.count == 1:
-                        entries.append((key_str))
-                    else:
-                        deletions.append((key_str))
+        entries, deletions = [], []
 
-                    for j in range(len(self.symbols)):
-                        if self.should_map(key_str, j):
-                            self.symbols[j].key_sum ^= key_int
-                            self.symbols[j].count -= cell.count
+        while True:
+            found = next((
+                (i, cell) for i, cell in enumerate(self.symbols)
+                if abs(cell.count) == 1 and (cell.key_sum in self.known_keys)
+            ), None)
 
-                    changed = True
-                    break
+            if not found:
+                break
+
+            i, cell = found
+            key_int = cell.key_sum
+            key_str = self.known_keys[key_int]
+
+            (entries if cell.count == 1 else deletions).append(key_str)
+
+            for j in range(len(self.symbols)):
+                if self.should_map(key_str, j):
+                    self.symbols[j].key_sum ^= key_int
+                    self.symbols[j].count -= cell.count
+
         return entries, deletions
+
     
 
 
